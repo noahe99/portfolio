@@ -569,7 +569,7 @@ html[data-intro='render'] .typed {
   pointer-events: none;
   opacity: 0;
   transition: opacity 1.2s ease;
-  mask-image: linear-gradient(to left, rgb(0 0 0 / 0.9), transparent 70%);
+  mask-image: linear-gradient(to left, #000 0%, rgb(0 0 0 / 0.3) 85%);
 }
 .ascii-bg[data-on] {
   opacity: 1;
@@ -577,7 +577,7 @@ html[data-intro='render'] .typed {
 .ascii-bg pre {
   margin: 0;
   color: var(--fg-dim);
-  opacity: 0.2;
+  opacity: 0.4;
   font: 12px/1.1 var(--font-mono);
   white-space: pre;
   user-select: none;

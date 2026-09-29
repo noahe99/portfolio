@@ -29,7 +29,7 @@ export const ui = {
     sideIntro: 'Eigene Projekte, an denen ich Neues ausprobiere.',
     hi: 'Hi, ich bin',
     intro:
-      'Ich baue Websites, Shops und Web-Apps, von der Idee bis zum Betrieb. Aktuell suche ich eine Stelle als Fullstack-Entwickler in Graz.',
+      'Ich baue Websites, Shops und Web-Apps, von der Idee bis zum Betrieb. Aktuell suche ich eine neue Stelle.',
     stackTitle: 'Stack',
     stackHint: 'Tipp: Die Häkchen lassen sich umschalten.',
     stackEmpty: 'Nichts ausgewählt. Auch eine Haltung.',
@@ -87,7 +87,7 @@ export const ui = {
     sideIntro: 'Projects of my own where I try out new things.',
     hi: "Hi, I'm",
     intro:
-      'I build websites, shops and web apps, from idea to operation. Currently looking for a full-stack developer role in Graz.',
+      'I build websites, shops and web apps, from idea to operation. Currently looking for a new role.',
     stackTitle: 'Stack',
     stackHint: 'Tip: the checkboxes can be toggled.',
     stackEmpty: 'Nothing selected. Fair enough.',
