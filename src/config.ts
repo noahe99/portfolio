@@ -4,7 +4,7 @@ export const site = {
   location: 'Graz',
   github: 'https://github.com/noahe99',
   linkedin: '', // TODO: profile URL
-  email: '', // TODO: public contact address
+  email: 'nedelsbrunner@gmail.com',
   stack: [
     'PHP · WordPress · WooCommerce',
     'JavaScript · TypeScript',

@@ -1,6 +1,7 @@
 ---
 import Editor from '../../layouts/Editor.astro';
-import { localePaths, ui } from '../../i18n';
+import GitLog from '../../components/GitLog.astro';
+import { href, localePaths, ui } from '../../i18n';
 
 export const getStaticPaths = () => localePaths();
 
@@ -11,4 +12,11 @@ const t = ui[lang];
 <Editor lang={lang} title={t.aboutTitle} file={t.files.about} current="about">
   <h1>{t.aboutTitle}</h1>
   {t.aboutText.map((p) => <p>{p}</p>)}
+
+  <h2>{t.careerTitle}</h2>
+  <GitLog entries={t.careerLog} />
+
+  <h2>{t.aboutSeekTitle}</h2>
+  <p>{t.aboutSeek}</p>
+  <p><a href={href(lang, 'contact')}>{t.aboutContact} →</a></p>
 </Editor>

@@ -706,3 +706,80 @@ html[data-ws='pending'] .shell {
 .shell[data-split='open'] .ascii-bg {
   opacity: 0.55;
 }
+
+/* ---------- git log (components/GitLog.astro), global for the split view ---------- */
+/* a terminal window; every row is one editor line, so the gutter numbers stay aligned
+   (the frame is a shadow, not a border, because a border would add height) */
+.prose .gitlog {
+  margin-inline: 0;
+  max-width: 52rem;
+  border-radius: 0.375rem;
+  background: var(--bg-alt);
+  box-shadow: 0 0 0 1px var(--border);
+  /* no overflow: hidden here, it would clip the gutter numbers drawn left of the window */
+}
+.gitlog-bar {
+  border-radius: 0.375rem 0.375rem 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: var(--line);
+  padding: 0 0.75rem;
+  background: var(--bg-hl);
+  color: var(--fg-dim);
+  font-size: 0.8125rem;
+}
+.gitlog-dots {
+  display: flex;
+  gap: 0.35rem;
+}
+.gitlog-dots i {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: #ff5f57;
+}
+.gitlog-dots i:nth-child(2) {
+  background: #febc2e;
+}
+.gitlog-dots i:nth-child(3) {
+  background: #28c840;
+}
+.gitlog-title {
+  flex: 1;
+  margin-right: 2.4rem; /* optically centered against the dots */
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.gitlog-body {
+  padding: var(--line) 1rem;
+}
+.gitlog-cmd {
+  line-height: var(--line);
+}
+.prose .gitlog-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.prose .gitlog-list > li::before {
+  content: none;
+}
+.gitlog-list li {
+  line-height: var(--line);
+}
+.gitlog-hash {
+  color: var(--accent);
+}
+.gitlog-ref {
+  color: var(--link);
+  font-weight: 700;
+}
+.gitlog-type {
+  color: var(--fg-dim);
+}
+.gitlog-feat {
+  color: var(--ok);
+}

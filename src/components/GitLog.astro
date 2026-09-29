@@ -1,0 +1,57 @@
+---
+/**
+ * Career as `git log --oneline`. The hashes are derived from the message, so they stay
+ * stable between builds. Styles live in global.css (the split view loads only HTML).
+ */
+interface Entry {
+  ref?: string;
+  msg: string;
+}
+
+interface Props {
+  entries: readonly Entry[];
+}
+
+const { entries } = Astro.props;
+
+// FNV-1a, shown as 7 hex chars like a short commit hash
+const hash = (text: string) => {
+  let h = 0x811c9dc5;
+  for (const ch of text) h = Math.imul(h ^ ch.codePointAt(0)!, 0x01000193) >>> 0;
+  return h.toString(16).padStart(8, '0').slice(0, 7);
+};
+
+const split = (msg: string) => {
+  const i = msg.indexOf(': ');
+  return i > 0 ? { type: msg.slice(0, i), text: msg.slice(i + 2) } : { type: '', text: msg };
+};
+---
+
+<figure class="gitlog">
+  <div class="gitlog-bar">
+    <span class="gitlog-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="gitlog-title">bash — ~/noah-edelsbrunner</span>
+  </div>
+  <div class="gitlog-body">
+  <div class="gitlog-cmd"><span class="dim">$</span> git log --oneline</div>
+  <ol class="gitlog-list">
+    {
+      entries.map(({ ref, msg }) => {
+        const { type, text } = split(msg);
+        return (
+          <li>
+            <span class="gitlog-hash">{hash(msg)}</span>{' '}
+            {ref && (
+              <>
+                <span class="gitlog-ref">({ref})</span>{' '}
+              </>
+            )}
+            {type && <span class={`gitlog-type gitlog-${type}`}>{type}:</span>} {text}
+          </li>
+        );
+      })
+    }
+  </ol>
+  <div class="gitlog-cmd"><span class="dim">$</span><span class="cursor" aria-hidden="true"></span></div>
+  </div>
+</figure>
