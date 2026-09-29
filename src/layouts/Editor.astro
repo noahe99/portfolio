@@ -42,7 +42,7 @@ const alternates = locales.map((l) => ({ lang: l, path: switchPath(Astro.url.pat
       // Wide screens rearrange deep links (README left, page right): hide the shell until done.
       try {
         const page = document.querySelector('meta[name="x-page"]')?.content;
-        if (matchMedia('(min-width: 80rem)').matches && page && page !== 'readme' && page !== '404') {
+        if (matchMedia('(min-width: 112.5rem)').matches && page && page !== 'readme' && page !== '404') {
           document.documentElement.dataset.ws = 'pending';
           setTimeout(() => delete document.documentElement.dataset.ws, 2500);
         }

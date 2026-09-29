@@ -1,4 +1,4 @@
-// Workspace for wide screens: README.md always stays open on the left, every other page
+// Workspace for wide screens (1800 px and up): README.md always stays open on the left, every other page
 // opens in a split pane on the right (one page at a time). Below the breakpoint, without JS
 // and for the 404 page every link is a normal link.
 //
@@ -15,7 +15,8 @@ interface Page {
   file: string;
 }
 
-const WIDE = matchMedia('(min-width: 80rem)');
+// split only where the README leaves the right half empty anyway (maximised Full HD and up)
+const WIDE = matchMedia('(min-width: 112.5rem)');
 const shell = document.querySelector<HTMLElement>('.shell');
 const readme = document.querySelector<HTMLElement>('.buffer .prose');
 const statusFile = document.querySelector<HTMLElement>('.status-file');
