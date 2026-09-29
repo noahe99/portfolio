@@ -30,12 +30,24 @@ const alternates = locales.map((l) => ({ lang: l, path: switchPath(Astro.url.pat
     <title>{fullTitle}</title>
     <meta name="description" content={description ?? t.description} />
     <meta name="generator" content={Astro.generator} />
+    <meta name="x-page" content={current} />
+    <meta name="x-file" content={file} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     {abs(Astro.url.pathname) && <link rel="canonical" href={abs(Astro.url.pathname)} />}
     {
       Astro.site &&
         alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={abs(a.path)} />)
     }
+    <script is:inline>
+      // Wide screens rearrange deep links (README left, page right): hide the shell until done.
+      try {
+        const page = document.querySelector('meta[name="x-page"]')?.content;
+        if (matchMedia('(min-width: 80rem)').matches && page && page !== 'readme' && page !== '404') {
+          document.documentElement.dataset.ws = 'pending';
+          setTimeout(() => delete document.documentElement.dataset.ws, 2500);
+        }
+      } catch {}
+    </script>
     <slot name="head" />
     <script is:inline>
       // Apply a pinned color scheme before first paint (avoids a flash).
@@ -90,7 +102,7 @@ const alternates = locales.map((l) => ({ lang: l, path: switchPath(Astro.url.pat
     </div>
 
     <script>
-      import '../scripts/split';
+      import '../scripts/workspace';
       import { trackLines } from '../scripts/lines';
 
       const prose = document.querySelector<HTMLElement>('.buffer .prose');

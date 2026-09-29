@@ -627,6 +627,7 @@ html[data-intro='render'] .typed {
   .split-close {
     padding: 0 0.75rem;
     color: var(--fg-dim);
+    font-size: 1.25rem;
     cursor: pointer;
   }
   .split-close:hover {
@@ -689,4 +690,19 @@ html[data-boot] .boot {
 }
 .boot-ready {
   color: var(--accent);
+}
+
+/* deep links on wide screens are rearranged by scripts/workspace.ts: no flash before that */
+html[data-ws='pending'] .shell {
+  visibility: hidden;
+}
+
+/* README.md stays open next to the split: soft marker in the file tree */
+.tree a[data-open]:not([aria-current]) {
+  background: var(--bg-hl);
+}
+
+/* the split narrows the README pane, so the wallpaper steps back a bit */
+.shell[data-split='open'] .ascii-bg {
+  opacity: 0.55;
 }
