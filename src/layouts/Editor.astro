@@ -91,6 +91,10 @@ const alternates = locales.map((l) => ({ lang: l, path: switchPath(Astro.url.pat
 
     <script>
       import '../scripts/split';
+      import { trackLines } from '../scripts/lines';
+
+      const prose = document.querySelector<HTMLElement>('.buffer .prose');
+      if (prose) trackLines(prose);
     </script>
     <script>
       const root = document.documentElement;

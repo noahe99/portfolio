@@ -20,6 +20,7 @@
   --tree-w: 19rem;
   --gutter: 3.5rem;
   --status-h: 1.75rem;
+  --line: 1.594rem; /* one body line (0.9375rem x 1.7): the gap between blocks is one blank line */
 
   accent-color: var(--accent);
   scrollbar-color: var(--fg-dim) transparent;
@@ -304,10 +305,11 @@ body {
 .prose > * {
   position: relative;
   counter-increment: ln;
-  margin-block: 0 1.25rem;
+  margin-block: 0 var(--line);
 }
 .prose > *::after {
-  content: counter(ln);
+  content: var(--nums, counter(ln));
+  white-space: pre;
   position: absolute;
   top: 0;
   left: calc(-1 * var(--gutter) - 0.25rem);
@@ -316,7 +318,7 @@ body {
   color: var(--fg-dim);
   font-size: 0.8125rem;
   font-weight: 400;
-  line-height: 1.7rem;
+  line-height: var(--lh, 1.7rem);
   font-style: normal;
   pointer-events: none;
   user-select: none;
@@ -478,6 +480,7 @@ html[data-intro] .prose > * {
   transition:
     opacity 0.3s ease,
     margin 0.5s ease,
+    line-height 0.5s ease,
     font-size 0.5s ease,
     color 0.5s ease;
 }
@@ -492,10 +495,11 @@ html[data-intro='hidden'] .prose > * {
 }
 /* raw look = the source file: one size, one color, blank line between blocks */
 :is(html[data-intro='hidden'], html[data-intro='raw']) .prose > * {
-  margin-block: 0 1.7rem;
+  margin-block: 0 var(--line);
   color: var(--fg);
   font-size: 0.9375rem;
   font-weight: 400;
+  line-height: 1.7;
 }
 :is(html[data-intro='hidden'], html[data-intro='raw']) .prose a {
   color: var(--fg);
