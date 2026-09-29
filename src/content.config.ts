@@ -14,6 +14,8 @@ const projects = defineCollection({
     stack: z.array(z.string()),
     url: z.string().url().optional(),
     repo: z.string().url().optional(),
+    // live-urls = real websites in production, side = own projects
+    category: z.enum(['live', 'side']).default('side'),
     order: z.number().default(0),
     // drafts are visible in dev only
     draft: z.boolean().default(false),

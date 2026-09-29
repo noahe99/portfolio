@@ -8,26 +8,41 @@ export const getStaticPaths = () => localePaths();
 const { lang } = Astro.props;
 const t = ui[lang];
 const projects = await getProjects(lang);
+const groups = [
+  { title: t.liveTitle, intro: t.liveIntro, items: projects.filter((p) => p.entry.data.category === 'live') },
+  { title: t.sideTitle, intro: t.sideIntro, items: projects.filter((p) => p.entry.data.category === 'side') },
+].filter((g) => g.items.length);
 ---
 
 <Editor lang={lang} title={t.projectsTitle} file="projects/index.md" current="projects">
   <h1>{t.projectsTitle}</h1>
   <p class="dim">{t.projectsIntro}</p>
   {
-    projects.length ? (
-      projects.map(({ entry, slug }) => (
+    groups.length ? (
+      groups.map((group) => (
         <>
-          <h2>
-            <a href={href(lang, `projects/${slug}`)}>{entry.data.title}</a>
-          </h2>
-          <p>{entry.data.summary}</p>
-          <ul class="chips">
-            {entry.data.stack.map((s) => (
-              <li>
-                <code>{s}</code>
-              </li>
-            ))}
-          </ul>
+          <h2>{group.title}</h2>
+          <p class="dim">{group.intro}</p>
+          {group.items.map(({ entry, slug }) => (
+            <>
+              <h3>
+                <a href={href(lang, `projects/${slug}`)}>{entry.data.title}</a>
+              </h3>
+              <p>{entry.data.summary}</p>
+              {entry.data.url && (
+                <p class="dim">
+                  ↗ <a href={entry.data.url} rel="noopener">{new URL(entry.data.url).host}</a>
+                </p>
+              )}
+              <ul class="chips">
+                {entry.data.stack.map((s) => (
+                  <li>
+                    <code>{s}</code>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ))}
         </>
       ))
     ) : (

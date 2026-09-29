@@ -4,6 +4,7 @@ summary: Template for a case study. Replace it with your first real project.
 year: 2026
 role: Full-stack development
 stack: [WordPress, WooCommerce, JavaScript]
+category: live
 order: 1
 draft: true
 ---

@@ -12,6 +12,10 @@ interface Props {
 const { lang, current, currentSlug } = Astro.props;
 const t = ui[lang];
 const projects = await getProjects(lang);
+const groups = [
+  { dir: t.liveDir, items: projects.filter((p) => p.entry.data.category === 'live') },
+  { dir: t.sideDir, items: projects.filter((p) => p.entry.data.category === 'side') },
+].filter((g) => g.items.length);
 const page = (key: string) => (current === key ? 'page' : undefined);
 ---
 
@@ -35,14 +39,23 @@ const page = (key: string) => (current === key ? 'page' : undefined);
         <summary>{t.projectsDir}</summary>
         <ul>
           {
-            projects.map(({ slug }) => (
+            groups.map((group) => (
               <li>
-                <a
-                  href={href(lang, `projects/${slug}`)}
-                  aria-current={currentSlug === slug ? 'page' : undefined}
-                >
-                  {slug}.md
-                </a>
+                <details open>
+                  <summary>{group.dir}</summary>
+                  <ul>
+                    {group.items.map(({ slug }) => (
+                      <li>
+                        <a
+                          href={href(lang, `projects/${slug}`)}
+                          aria-current={currentSlug === slug ? 'page' : undefined}
+                        >
+                          {slug}.md
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
               </li>
             ))
           }

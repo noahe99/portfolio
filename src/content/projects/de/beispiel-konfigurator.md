@@ -4,6 +4,7 @@ summary: Vorlage für eine Case Study. Ersetze sie durch dein erstes echtes Proj
 year: 2026
 role: Fullstack-Entwicklung
 stack: [WordPress, WooCommerce, JavaScript]
+category: live
 order: 1
 draft: true
 ---
