@@ -78,8 +78,24 @@ function pane() {
   return el;
 }
 
+/**
+ * One h1 per document: while a page is open in the split, its title is the h1 and the
+ * README name becomes a look-alike without heading semantics. Attributes (classes, the
+ * inline line-number variables) move over, so nothing shifts visually.
+ */
+function setReadmeHeading(primary: boolean) {
+  const current = readme?.querySelector(primary ? ':scope > .fake-h1' : ':scope > h1');
+  if (!current) return;
+  const next = document.createElement(primary ? 'h1' : 'p');
+  for (const { name, value } of Array.from(current.attributes)) next.setAttribute(name, value);
+  next.classList.toggle('fake-h1', !primary);
+  next.innerHTML = current.innerHTML;
+  current.replaceWith(next);
+}
+
 /** Title, status line, file tree highlight and language links follow what is open. */
 function sync(page: (Page & { path: string }) | null) {
+  setReadmeHeading(!page);
   document.title = page ? page.title : readmeTitle;
   if (statusFile) statusFile.textContent = page ? `${readmeFile} │ ${page.file}` : readmeFile;
   for (const link of document.querySelectorAll<HTMLAnchorElement>('.tree a[href]')) {
