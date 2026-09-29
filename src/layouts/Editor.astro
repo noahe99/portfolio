@@ -1,0 +1,156 @@
+---
+import '../styles/global.css';
+import Tree from '../components/Tree.astro';
+import { locales, otherLang, switchPath, ui, type Lang } from '../i18n';
+import { site } from '../config';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  file: string;
+  current: string;
+  currentSlug?: string;
+  description?: string;
+}
+
+const { lang, title, file, current, currentSlug, description } = Astro.props;
+const t = ui[lang];
+const isHome = current === 'readme';
+const fullTitle = isHome ? `${site.name} · ${t.tagline}` : `${title} · ${site.name}`;
+const abs = (path: string) => (Astro.site ? new URL(path, Astro.site).href : undefined);
+const alternates = locales.map((l) => ({ lang: l, path: switchPath(Astro.url.pathname, l) }));
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description ?? t.description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {abs(Astro.url.pathname) && <link rel="canonical" href={abs(Astro.url.pathname)} />}
+    {
+      Astro.site &&
+        alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={abs(a.path)} />)
+    }
+    <slot name="head" />
+    <script is:inline>
+      // Apply a pinned color scheme before first paint (avoids a flash).
+      try {
+        const s = localStorage.getItem('color-scheme');
+        if (s === 'light' || s === 'dark') {
+          document.documentElement.style.colorScheme = s;
+          document.querySelector('meta[name="color-scheme"]').content = s;
+        }
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">{t.skip}</a>
+    <div class="shell" data-split-label={t.splitLabel} data-split-close={t.splitClose}>
+      <header class="topbar">
+        <button type="button" class="menu-btn" popovertarget="tree">≡ {t.menu}</button>
+        <span class="topbar-file">{file}</span>
+      </header>
+
+      <Tree lang={lang} current={current} currentSlug={currentSlug} />
+
+      <slot name="bg" />
+
+      <main id="main" class="buffer" tabindex="-1">
+        <div class="prose">
+          <slot />
+        </div>
+      </main>
+
+      <footer class="status">
+        <span class="status-mode">NORMAL</span>
+        <span class="status-file">{file}</span>
+        <span class="status-spacer"></span>
+        <nav class="status-lang" aria-label={t.langLabel}>
+          {
+            alternates.map((a) => (
+              <a
+                href={a.path}
+                lang={a.lang}
+                hreflang={a.lang}
+                aria-current={a.lang === lang ? 'true' : undefined}
+              >
+                {a.lang}
+              </a>
+            ))
+          }
+        </nav>
+        <span class="status-item status-hide-sm">utf-8</span>
+        <span class="status-item" data-scroll aria-hidden="true">Top</span>
+      </footer>
+    </div>
+
+    <script>
+      import '../scripts/split';
+    </script>
+    <script>
+      const root = document.documentElement;
+      const KEY = 'color-scheme';
+      const mq = matchMedia('(prefers-color-scheme: dark)');
+      const meta = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]');
+      const btn = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+
+      const read = () => {
+        try {
+          const s = localStorage.getItem(KEY);
+          return s === 'light' || s === 'dark' ? s : null;
+        } catch {
+          return null;
+        }
+      };
+      const write = (s: 'light' | 'dark' | null) => {
+        try {
+          if (s) localStorage.setItem(KEY, s);
+          else localStorage.removeItem(KEY);
+        } catch {}
+      };
+      const system = () => (mq.matches ? 'dark' : 'light');
+
+      // Two states only: follow the system, or pin the opposite of it.
+      const render = () => {
+        const pinned = read();
+        root.style.colorScheme = pinned ?? '';
+        if (meta) meta.content = pinned ?? 'light dark';
+        if (btn) {
+          btn.hidden = false;
+          btn.textContent = `◐ ${pinned ?? system()}`;
+          btn.setAttribute('aria-pressed', String(pinned !== null));
+        }
+      };
+      btn?.addEventListener('click', () => {
+        write(read() ? null : system() === 'dark' ? 'light' : 'dark');
+        render();
+      });
+      mq.addEventListener('change', render);
+      render();
+
+      // vim-style scroll position in the status line
+      const buffer = document.querySelector<HTMLElement>('.buffer');
+      const out = document.querySelector<HTMLElement>('[data-scroll]');
+      const update = () => {
+        if (!buffer || !out) return;
+        const max = buffer.scrollHeight - buffer.clientHeight;
+        out.textContent =
+          max <= 1
+            ? 'All'
+            : buffer.scrollTop <= 0
+              ? 'Top'
+              : buffer.scrollTop >= max - 1
+                ? 'Bot'
+                : `${Math.round((buffer.scrollTop / max) * 100)}%`;
+      };
+      buffer?.addEventListener('scroll', update, { passive: true });
+      addEventListener('resize', update);
+      update();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,154 @@
+---
+import Editor from '../../layouts/Editor.astro';
+import { href, localePaths, locales, ui } from '../../i18n';
+import { site } from '../../config';
+import { getProjects } from '../../lib/projects';
+
+export const getStaticPaths = () => localePaths();
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const projects = (await getProjects(lang)).slice(0, 3);
+const hiLength = [...t.hi].length;
+---
+
+<Editor lang={lang} title={site.name} file={t.files.readme} current="readme">
+  <script is:inline slot="head">
+    // Boot log + raw markdown -> rendered intro: first visit per session only (add ?boot to
+    // replay). Skipped for reduced motion; the failsafe timer guarantees the final state.
+    try {
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const root = document.documentElement;
+        let seen = true; // without storage we would replay every time, so assume seen
+        try {
+          seen = !!sessionStorage.getItem('boot-seen');
+        } catch {}
+        if (location.search.includes('boot') || !seen) {
+          root.dataset.boot = 'on';
+          root.dataset.intro = 'hidden';
+        }
+        setTimeout(() => {
+          delete root.dataset.intro;
+          delete root.dataset.boot;
+        }, 8000);
+      }
+    } catch {}
+  </script>
+
+  <div class="ascii-bg" data-ascii aria-hidden="true" slot="bg"><pre></pre></div>
+
+  <div
+    class="boot"
+    data-boot-overlay
+    aria-hidden="true"
+    slot="bg"
+    data-pages="__BUILD_PAGES__"
+    data-ms="__BUILD_MS__"
+    data-commit="__BUILD_COMMIT__"
+    data-langs={locales.join(',')}
+  >
+    <div class="boot-inner">
+      <pre data-boot-out></pre>
+    </div>
+  </div>
+
+  <p class="dim">
+    <span class="typed" style={`--n:${hiLength}`}>{t.hi}</span><span class="cursor" aria-hidden="true"></span>
+  </p>
+  <h1>{site.name}</h1>
+  <p>{t.tagline}. {t.intro}</p>
+
+  <h2>{t.stackTitle}</h2>
+  <ul class="tasks">
+    {
+      site.stack.map((line) => (
+        <li>
+          <label>
+            <input type="checkbox" checked />
+            <span class="box" aria-hidden="true" />
+            {line}
+          </label>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="stack-empty dim">{t.stackEmpty}</p>
+  <p class="dim">{t.stackHint}</p>
+
+  <h2>{t.workTitle}</h2>
+  {
+    projects.length ? (
+      <ul>
+        {projects.map(({ entry, slug }) => (
+          <li>
+            <a href={href(lang, `projects/${slug}`)}>{entry.data.title}</a>
+            <span class="dim"> — {entry.data.summary}</span>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="dim">{t.noProjects}</p>
+    )
+  }
+  <p><a href={href(lang, 'projects')}>{t.allProjects} →</a></p>
+</Editor>
+
+<script>
+  import { initAscii } from '../../scripts/ascii';
+  import { runBoot } from '../../scripts/boot';
+
+  initAscii();
+
+  const root = document.documentElement;
+  const mode = document.querySelector('.status-mode');
+
+  // ---- intro: type the first line, reveal the raw file, then render it ----
+  function startIntro() {
+    if (root.dataset.intro !== 'hidden') return;
+
+    const STEP = 30; // ms between lines
+    const TYPE_OFFSET = 8; // the other lines wait until the first one is typed
+    const blocks = document.querySelectorAll<HTMLElement>('.prose > *');
+    root.style.setProperty('--step', `${STEP}ms`);
+    blocks.forEach((el, i) => {
+      el.style.setProperty('--i', String(i)); // delay while rendering
+      el.style.setProperty('--r', String(i === 0 ? 0 : i + TYPE_OFFSET)); // delay while revealing
+    });
+    const events = ['pointerdown', 'keydown', 'wheel', 'touchstart'] as const;
+    const timers: number[] = [];
+
+    const finish = () => {
+      timers.forEach(clearTimeout);
+      events.forEach((e) => removeEventListener(e, finish));
+      delete root.dataset.intro; // transitions vanish with the attribute, so this is instant
+      if (mode) mode.textContent = 'NORMAL';
+    };
+
+    const revealEnd = (blocks.length - 1 + TYPE_OFFSET) * STEP + 300;
+    const renderAt = revealEnd + 100;
+    const doneAt = renderAt + blocks.length * STEP + 650;
+
+    if (mode) mode.textContent = 'INSERT';
+    events.forEach((e) => addEventListener(e, finish, { passive: true }));
+    requestAnimationFrame(() => requestAnimationFrame(() => (root.dataset.intro = 'raw')));
+    timers.push(
+      window.setTimeout(() => {
+        root.dataset.intro = 'render';
+        if (mode) mode.textContent = 'NORMAL';
+      }, renderAt),
+      window.setTimeout(finish, doneAt),
+    );
+  }
+
+  const overlay = document.querySelector<HTMLElement>('[data-boot-overlay]');
+
+  if (root.dataset.boot === 'on' && overlay) {
+    runBoot(overlay, {
+      startIntro,
+      skipIntro: () => {
+        delete root.dataset.intro; // final page immediately
+        if (mode) mode.textContent = 'NORMAL';
+      },
+    });
+  }
+</script>

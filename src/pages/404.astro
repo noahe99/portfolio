@@ -1,0 +1,14 @@
+---
+import Editor from '../layouts/Editor.astro';
+import { href, ui } from '../i18n';
+
+// Static hosts serve one 404 page; German is the default language.
+const lang = 'de';
+const t = ui[lang];
+---
+
+<Editor lang={lang} title={t.notFound} file="404" current="404">
+  <h1>{t.notFound}</h1>
+  <p class="dim">{t.notFoundText}</p>
+  <p><a href={href(lang)}>{t.home}</a></p>
+</Editor>

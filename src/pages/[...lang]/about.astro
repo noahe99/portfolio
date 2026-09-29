@@ -1,0 +1,14 @@
+---
+import Editor from '../../layouts/Editor.astro';
+import { localePaths, ui } from '../../i18n';
+
+export const getStaticPaths = () => localePaths();
+
+const { lang } = Astro.props;
+const t = ui[lang];
+---
+
+<Editor lang={lang} title={t.aboutTitle} file={t.files.about} current="about">
+  <h1>{t.aboutTitle}</h1>
+  {t.aboutText.map((p) => <p>{p}</p>)}
+</Editor>

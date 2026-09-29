@@ -1,0 +1,37 @@
+---
+import Editor from '../../../layouts/Editor.astro';
+import { href, localePaths, ui } from '../../../i18n';
+import { getProjects } from '../../../lib/projects';
+
+export const getStaticPaths = () => localePaths();
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const projects = await getProjects(lang);
+---
+
+<Editor lang={lang} title={t.projectsTitle} file="projects/index.md" current="projects">
+  <h1>{t.projectsTitle}</h1>
+  <p class="dim">{t.projectsIntro}</p>
+  {
+    projects.length ? (
+      projects.map(({ entry, slug }) => (
+        <>
+          <h2>
+            <a href={href(lang, `projects/${slug}`)}>{entry.data.title}</a>
+          </h2>
+          <p>{entry.data.summary}</p>
+          <ul class="chips">
+            {entry.data.stack.map((s) => (
+              <li>
+                <code>{s}</code>
+              </li>
+            ))}
+          </ul>
+        </>
+      ))
+    ) : (
+      <p class="dim">{t.noProjects}</p>
+    )
+  }
+</Editor>

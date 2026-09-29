@@ -1,0 +1,20 @@
+---
+import Editor from '../../layouts/Editor.astro';
+import { localePaths, ui } from '../../i18n';
+import { site } from '../../config';
+
+export const getStaticPaths = () => localePaths();
+
+const { lang } = Astro.props;
+const t = ui[lang];
+---
+
+<Editor lang={lang} title={t.contactTitle} file={t.files.contact} current="contact">
+  <h1>{t.contactTitle}</h1>
+  <p>{t.contactText}</p>
+  <ul>
+    {site.email && <li>e-mail: <a href={`mailto:${site.email}`}>{site.email}</a></li>}
+    {site.github && <li>github: <a href={site.github} rel="me noopener">{site.github.replace('https://', '')}</a></li>}
+    {site.linkedin && <li>linkedin: <a href={site.linkedin} rel="me noopener">{site.linkedin.replace('https://', '')}</a></li>}
+  </ul>
+</Editor>

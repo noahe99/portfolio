@@ -1,0 +1,47 @@
+---
+import { render } from 'astro:content';
+import Editor from '../../../layouts/Editor.astro';
+import { href, locales, defaultLang, ui } from '../../../i18n';
+import { getProjects } from '../../../lib/projects';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const lang of locales) {
+    for (const { entry, slug } of await getProjects(lang)) {
+      paths.push({
+        params: { lang: lang === defaultLang ? undefined : lang, slug },
+        props: { lang, entry, slug },
+      });
+    }
+  }
+  return paths;
+}
+
+const { lang, entry, slug } = Astro.props;
+const t = ui[lang];
+const { Content } = await render(entry);
+const { title, summary, year, role, stack, url, repo } = entry.data;
+---
+
+<Editor
+  lang={lang}
+  title={title}
+  description={summary}
+  file={`projects/${slug}.md`}
+  current="projects"
+  currentSlug={slug}
+>
+  <h1>{title}</h1>
+  <dl class="meta">
+    <dt>{t.role}</dt>
+    <dd>{role}</dd>
+    <dt>{t.year}</dt>
+    <dd>{year}</dd>
+    <dt>{t.stack}</dt>
+    <dd>{stack.join(' · ')}</dd>
+    {url && (<><dt>live</dt><dd><a href={url} rel="noopener">{t.live} ↗</a></dd></>)}
+    {repo && (<><dt>repo</dt><dd><a href={repo} rel="noopener">{t.repo} ↗</a></dd></>)}
+  </dl>
+  <Content />
+  <p class="back"><a href={href(lang, 'projects')}>{t.back}</a></p>
+</Editor>

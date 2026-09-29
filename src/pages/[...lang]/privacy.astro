@@ -1,0 +1,60 @@
+---
+import Editor from '../../layouts/Editor.astro';
+import { localePaths, ui } from '../../i18n';
+import { site } from '../../config';
+
+export const getStaticPaths = () => localePaths();
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const de = lang === 'de';
+---
+
+<!-- TODO: review before going live (hosting provider, contact form, analytics). Not legal advice. -->
+<Editor lang={lang} title={t.privacyTitle} file={t.files.privacy} current="privacy">
+  <h1>{t.privacyTitle}</h1>
+  {
+    de ? (
+      <>
+        <p>
+          Diese Website ist eine statische Portfolio-Seite. Sie setzt keine Cookies und verwendet
+          kein Tracking.
+        </p>
+        <h2>Hosting</h2>
+        <p>
+          Die Seite wird über Cloudflare Pages ausgeliefert. Dabei verarbeitet der Anbieter
+          technisch notwendige Daten (z. B. IP-Adresse, Zeitpunkt des Zugriffs) in Server-Logs.
+        </p>
+        <h2>Lokale Speicherung</h2>
+        <p>
+          Wenn du das Farbschema umschaltest, speichert dein Browser diese Wahl lokal
+          (localStorage). Die Information verlässt dein Gerät nicht.
+        </p>
+        <h2>Kontakt</h2>
+        <p>
+          Verantwortlich: {site.name}, {site.location}. Bei Fragen zum Datenschutz schreibe an{' '}
+          {site.email ? <a href={`mailto:${site.email}`}>{site.email}</a> : '[E-Mail]'}.
+        </p>
+      </>
+    ) : (
+      <>
+        <p>This is a static portfolio site. It sets no cookies and uses no tracking.</p>
+        <h2>Hosting</h2>
+        <p>
+          The site is served via Cloudflare Pages. The provider processes technically necessary
+          data (e.g. IP address, time of access) in server logs.
+        </p>
+        <h2>Local storage</h2>
+        <p>
+          If you switch the color scheme, your browser stores that choice locally (localStorage).
+          The information never leaves your device.
+        </p>
+        <h2>Contact</h2>
+        <p>
+          Controller: {site.name}, {site.location}. For privacy questions write to{' '}
+          {site.email ? <a href={`mailto:${site.email}`}>{site.email}</a> : '[email]'}.
+        </p>
+      </>
+    )
+  }
+</Editor>

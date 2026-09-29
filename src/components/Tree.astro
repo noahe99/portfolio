@@ -1,0 +1,84 @@
+---
+import { href, ui, type Lang } from '../i18n';
+import { site } from '../config';
+import { getProjects } from '../lib/projects';
+
+interface Props {
+  lang: Lang;
+  current: string;
+  currentSlug?: string;
+}
+
+const { lang, current, currentSlug } = Astro.props;
+const t = ui[lang];
+const projects = await getProjects(lang);
+const page = (key: string) => (current === key ? 'page' : undefined);
+---
+
+<nav id="tree" class="tree" popover aria-label={t.navLabel}>
+  <div class="tree-head">
+    <span class="tree-root">~/{site.name.toLowerCase().replace(' ', '-')}</span>
+    <button
+      type="button"
+      class="tree-close"
+      popovertarget="tree"
+      popovertargetaction="hide"
+      aria-label={t.close}>×</button
+    >
+  </div>
+
+  <ul class="tree-list">
+    <li><a href={href(lang)} aria-current={page('readme')}>{t.files.readme}</a></li>
+    <li><a href={href(lang, 'about')} aria-current={page('about')}>{t.files.about}</a></li>
+    <li>
+      <details open>
+        <summary>{t.projectsDir}</summary>
+        <ul>
+          {
+            projects.map(({ slug }) => (
+              <li>
+                <a
+                  href={href(lang, `projects/${slug}`)}
+                  aria-current={currentSlug === slug ? 'page' : undefined}
+                >
+                  {slug}.md
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a href={href(lang, 'projects')} aria-current={currentSlug ? undefined : page('projects')}>
+              index.md
+            </a>
+          </li>
+        </ul>
+      </details>
+    </li>
+    <li><a href={href(lang, 'contact')} aria-current={page('contact')}>{t.files.contact}</a></li>
+  </ul>
+
+  <ul class="tree-list tree-foot">
+    <li><a href={href(lang, 'imprint')} aria-current={page('imprint')}>{t.files.imprint}</a></li>
+    <li><a href={href(lang, 'privacy')} aria-current={page('privacy')}>{t.files.privacy}</a></li>
+    {site.github && <li><a href={site.github} rel="me noopener">github ↗</a></li>}
+    {site.linkedin && <li><a href={site.linkedin} rel="me noopener">linkedin ↗</a></li>}
+    {site.email && <li><a href={`mailto:${site.email}`}>e-mail</a></li>}
+    {
+      current === 'readme' && (
+        <li>
+          <button
+            type="button"
+            class="tree-btn"
+            data-ascii-toggle
+            hidden
+            data-on={t.asciiOn}
+            data-off={t.asciiOff}
+          />
+        </li>
+      )
+    }
+    <li>
+      <button type="button" class="tree-btn" data-theme-toggle hidden aria-label={t.themeLabel}></button>
+    </li>
+  </ul>
+</nav>

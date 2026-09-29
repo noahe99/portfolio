@@ -1,0 +1,28 @@
+---
+import Editor from '../../layouts/Editor.astro';
+import { localePaths, ui } from '../../i18n';
+import { site } from '../../config';
+
+export const getStaticPaths = () => localePaths();
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const de = lang === 'de';
+---
+
+<!-- TODO: fill in every [bracketed] field before going live. Not legal advice. -->
+<Editor lang={lang} title={t.imprintTitle} file={t.files.imprint} current="imprint">
+  <h1>{t.imprintTitle}</h1>
+  <p class="dim">
+    {de ? 'Angaben gemäß § 5 ECG und § 25 MedienG.' : 'Information pursuant to § 5 ECG and § 25 MedienG (Austria).'}
+  </p>
+  <p>
+    {site.name}<br />
+    [{de ? 'Straße und Hausnummer' : 'Street and number'}]<br />
+    [{de ? 'PLZ' : 'Postcode'}] {site.location}, {de ? 'Österreich' : 'Austria'}
+  </p>
+  <p>
+    {de ? 'Kontakt' : 'Contact'}: {site.email ? <a href={`mailto:${site.email}`}>{site.email}</a> : '[E-Mail]'}
+  </p>
+  <p>{de ? 'Tätigkeit' : 'Occupation'}: [{de ? 'z. B. Webentwicklung' : 'e.g. web development'}]</p>
+</Editor>
