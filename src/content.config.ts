@@ -4,8 +4,9 @@ import { z } from 'astro/zod';
 
 // One markdown file per project and language:
 // src/content/projects/de/<slug>.md and src/content/projects/en/<slug>.md
+// (.mdx when a project needs components such as the PageSpeed table)
 const projects = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/projects' }),
   schema: z.object({
     title: z.string(),
     summary: z.string(),

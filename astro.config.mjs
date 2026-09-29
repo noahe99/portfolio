@@ -7,6 +7,8 @@ import { defineConfig } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
 
+import mdx from '@astrojs/mdx';
+
 /**
  * Fills the placeholders of the home page boot log with real build facts
  * (page count, build duration, commit) once the build is done.
@@ -59,7 +61,7 @@ function buildInfo() {
 // https://astro.build/config
 export default defineConfig({
   // TODO: set `site` to the final domain (enables canonical + hreflang URLs)
-  integrations: [buildInfo()],
+  integrations: [buildInfo(), mdx()],
   markdown: {
     shikiConfig: { theme: 'tokyo-night' },
   },

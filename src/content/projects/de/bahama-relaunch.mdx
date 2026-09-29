@@ -1,0 +1,76 @@
+---
+title: Relaunch bahama.at
+summary: Neue Landingpage für Bahama-Großschirme in Österreich. Ein eigenes Block-Theme mit Flächenplaner, der Gastronomen vom Grundriss zur Anfrage führt.
+year: 2026
+role: "[Rolle ergänzen: Konzept, Design, Texte, Entwicklung?]"
+stack: [WordPress, Block-Theme, PHP, JavaScript, Secure Custom Fields]
+category: live
+order: 2
+draft: true
+---
+
+import PageSpeed from '../../../components/PageSpeed.astro';
+
+{/*
+ENTWURF. Grundlage: Code und PRODUCT.md des Themes lipowec-landing, Screenshots von bahama.at und bahama.local.
+Vor dem Veröffentlichen: Freigabe von Faircom (und ggf. deinem Arbeitgeber) einholen.
+Offen: Rolle, Launch-Datum, Live-URL (Feld url), Nachher-Werte der PageSpeed-Tabelle.
+*/}
+
+## Ausgangslage
+
+Bahama baut Großschirme für die Gastronomie, von 2,8 bis 140 m². In Österreich vertreibt sie Faircom, der Hauptimporteur. Die Website soll Wirt:innen und Hoteliers zeigen, welcher Schirm zu ihrer Fläche passt, und sie zu einer Anfrage führen.
+
+Die bisherige Startseite war ein großes Bild mit Menü. Kein Text, kein Kontaktweg, keine Anfrage. Gebaut war sie mit einem Page Builder und einem Stapel Alt-Plugins, und auf dem Handy war sie langsam.
+
+![Alte Startseite von bahama.at: ein Bild mit Menü](../../../assets/projects/bahama-alt-desktop.webp)
+
+## Ziel
+
+Jede Seite endet mit einem klaren nächsten Schritt: **Angebot anfordern** oder **zum Konfigurator**. Dafür muss ein Gastronom schnell verstehen, welches der sechs Modelle zu seinem Gastgarten passt, und warum er der Technik trauen kann.
+
+![Neue Startseite: klare Aussage, Anfrage, Telefon und Vertrauensleiste](../../../assets/projects/bahama-neu-desktop.webp)
+
+## Umsetzung
+
+### Ein Block-Theme von null
+
+Statt des Page Builders gibt es ein eigenes Block-Theme für den Gutenberg-Editor. 13 eigene Blöcke (Modellübersicht, Technik, Maßtabelle, Referenzen, Anfrage und mehr) werden über Secure Custom Fields registriert. Die Feldgruppen liegen als JSON im Theme und sind damit versioniert. Das Team pflegt Inhalte im Editor, ohne das Layout zu zerstören.
+
+### Der Flächenplaner
+
+Das Herzstück ist ein interaktiver Plan. Breite und Tiefe der Terrasse einstellen, und der Planer zeichnet einen Grundriss mit Tischraster (2,3 m pro Tisch mit Gang) und schlägt eine Belegung vor: vom kleinen Pure bis zum Magnum. Er zeigt Fläche, geschätzte Sitzplätze und Modell, und übernimmt die Maße direkt in die Anfrage.
+
+![Flächenplaner: Grundriss mit Tischraster und vorgeschlagenen Schirmen](../../../assets/projects/bahama-neu-planer.webp)
+
+### Vertrauen durch Fakten
+
+Großschirme sind eine Investition. Die Seite beantwortet die Einwände, bevor sie gestellt werden: Windstabilität, Aufbau des Schirms Bauteil für Bauteil, Hersteller seit 1950, Auszeichnungen und Referenzen. Alle Angaben stammen vom Hersteller und sind freigegeben.
+
+### Anfrage ohne Plugin
+
+Das Anfrageformular ist Teil des Themes. Es prüft ein Nonce, bereinigt alle Eingaben und verschickt die Anfrage per `wp_mail`. Die Schriften liegen selbst gehostet im Theme, ohne Google-Fonts-CDN, und die wichtigsten werden vorgeladen.
+
+### Auf dem Handy
+
+Links die alte, rechts die neue Startseite.
+
+![Alte Startseite auf dem Handy](../../../assets/projects/bahama-alt-mobil.webp) ![Neue Startseite auf dem Handy](../../../assets/projects/bahama-neu-mobil.webp)
+
+## Performance
+
+<PageSpeed
+  lang="de"
+  date="29.09.2026"
+  url="bahama.at"
+  mobile={{ before: { performance: 34, accessibility: 86, bestPractices: 96, seo: 85 } }}
+  desktop={{ before: { performance: 65, accessibility: 83, bestPractices: 100, seo: 85 } }}
+/>
+
+## Stand
+
+Der Relaunch läuft lokal. [Stand und Launch-Datum ergänzen.] Nach dem Launch kommen die Nachher-Werte in die Tabelle.
+
+## Rückblick
+
+[Was war am schwierigsten, und was würdest du heute anders machen?]

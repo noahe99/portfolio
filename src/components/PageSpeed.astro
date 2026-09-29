@@ -1,0 +1,143 @@
+---
+/**
+ * Before/after table for PageSpeed Insights (Lighthouse) scores, mobile and desktop.
+ * Missing "after" values render as pending. Status is shape + number + color
+ * (▲ 0–49, ■ 50–89, ● 90–100, as in Lighthouse), never color alone.
+ */
+type Scores = { performance?: number; accessibility?: number; bestPractices?: number; seo?: number };
+type Device = { before: Scores; after?: Scores };
+
+interface Props {
+  lang: 'de' | 'en';
+  date: string; // date of the "before" measurement, e.g. '29.09.2026'
+  url: string;
+  mobile: Device;
+  desktop: Device;
+}
+
+const { lang, date, url, mobile, desktop } = Astro.props;
+const de = lang === 'de';
+
+const t = de
+  ? {
+      caption: 'PageSpeed Insights',
+      measured: `Vorher gemessen am ${date}`,
+      mobile: 'Mobil',
+      desktop: 'Desktop',
+      category: 'Kategorie',
+      before: 'Vorher',
+      after: 'Nachher',
+      delta: 'Δ',
+      pending: 'ausstehend',
+      pendingNote: 'Die Nachher-Werte werden nach dem Launch gemessen.',
+      legend: ['0–49', '50–89', '90–100'],
+    }
+  : {
+      caption: 'PageSpeed Insights',
+      measured: `Before measured on ${date}`,
+      mobile: 'Mobile',
+      desktop: 'Desktop',
+      category: 'Category',
+      before: 'Before',
+      after: 'After',
+      delta: 'Δ',
+      pending: 'pending',
+      pendingNote: 'The after values will be measured after launch.',
+      legend: ['0–49', '50–89', '90–100'],
+    };
+
+const categories: { key: keyof Scores; label: string }[] = [
+  { key: 'performance', label: de ? 'Leistung' : 'Performance' },
+  { key: 'accessibility', label: de ? 'Barrierefreiheit' : 'Accessibility' },
+  { key: 'bestPractices', label: 'Best Practices' },
+  { key: 'seo', label: 'SEO' },
+];
+
+// a long bar for normal widths and a short one for narrow screens (CSS picks one)
+const SIZES = { lg: 10, sm: 5 } as const;
+const level = (v: number) => (v >= 90 ? 'good' : v >= 50 ? 'mid' : 'bad');
+const icon = { good: '●', mid: '■', bad: '▲' } as const;
+const bar = (v: number, size: number) => {
+  const full = Math.round((v / 100) * size);
+  return { on: '█'.repeat(full), off: '░'.repeat(size - full) };
+};
+
+const devices = [
+  { name: t.mobile, data: mobile },
+  { name: t.desktop, data: desktop },
+];
+const hasPending = devices.some((d) => categories.some((c) => d.data.after?.[c.key] == null));
+---
+
+<figure class="psi">
+  <figcaption class="psi-head">
+    <span class="psi-title">{t.caption}</span>
+    <span class="dim">{t.measured} · {url}</span>
+  </figcaption>
+
+  <div class="psi-grid">
+    {
+      devices.map(({ name, data }) => (
+        <table class="psi-table">
+          <caption>{name}</caption>
+          <thead>
+            <tr>
+              <th scope="col">{t.category}</th>
+              <th scope="col">{t.before}</th>
+              <th scope="col">{t.after}</th>
+              <th scope="col" class="psi-num">{t.delta}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {categories.map(({ key, label }) => {
+              const b = data.before[key];
+              const a = data.after?.[key];
+              const d = a != null && b != null ? a - b : null;
+              return (
+                <tr>
+                  <th scope="row">{label}</th>
+                  {[b, a].map((v) =>
+                    v == null ? (
+                      <td class="psi-pending">
+                        {Object.entries(SIZES).map(([size, n]) => (
+                          <span class={`psi-bar psi-bar-${size}`} aria-hidden="true">
+                            {'·'.repeat(n)}
+                          </span>
+                        ))}{' '}
+                        <span class="dim">{t.pending}</span>
+                      </td>
+                    ) : (
+                      <td data-level={level(v)}>
+                        {Object.entries(SIZES).map(([size, n]) => (
+                          <span class={`psi-bar psi-bar-${size}`} aria-hidden="true">
+                            <span class="psi-on">{bar(v, n).on}</span>
+                            <span class="psi-off">{bar(v, n).off}</span>
+                          </span>
+                        ))}{' '}
+                        <span class="psi-icon" aria-hidden="true">
+                          {icon[level(v)]}
+                        </span>{' '}
+                        <span class="psi-score">{v}</span>
+                      </td>
+                    ),
+                  )}
+                  <td class="psi-num">
+                    {d == null ? <span class="dim">–</span> : <span data-delta={d > 0 ? 'up' : d < 0 ? 'down' : 'flat'}>{d > 0 ? `+${d}` : d}</span>}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      ))
+    }
+  </div>
+
+  <p class="psi-legend dim">
+    <span data-level="bad"><span class="psi-icon" aria-hidden="true">▲</span> {t.legend[0]}</span>
+    <span data-level="mid"><span class="psi-icon" aria-hidden="true">■</span> {t.legend[1]}</span>
+    <span data-level="good"><span class="psi-icon" aria-hidden="true">●</span> {t.legend[2]}</span>
+    {hasPending && <span>· {t.pendingNote}</span>}
+  </p>
+</figure>
+

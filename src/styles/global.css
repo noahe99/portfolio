@@ -707,6 +707,125 @@ html[data-ws='pending'] .shell {
   opacity: 0.55;
 }
 
+/* two images in one paragraph (e.g. old/new phone screenshots) sit side by side */
+.prose p:has(> img + img) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 36rem;
+}
+
+/* ---------- PageSpeed table (components/PageSpeed.astro) ----------
+   Global on purpose: in the split view a page's HTML is loaded into the home page,
+   which never loads per-component styles. */
+.psi {
+  margin-inline: 0;
+  /* Lighthouse status colors, validated against both surfaces */
+  --psi-good: light-dark(#2e7d4f, #4fae6a);
+  --psi-mid: light-dark(#c48a00, #e0b100);
+  --psi-bad: light-dark(#a8201a, #ff8a7a);
+}
+/* every row is exactly one editor line, so the gutter numbers stay aligned */
+.psi-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1rem;
+  margin-bottom: var(--line);
+}
+.psi-title {
+  color: var(--accent);
+  font-weight: 700;
+}
+.psi-grid {
+  display: grid;
+  gap: var(--line);
+  max-width: 40rem;
+  overflow-x: auto;
+}
+.psi-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.psi-table caption {
+  padding: 0;
+  color: var(--link);
+  font-weight: 700;
+  text-align: left;
+}
+.psi-table th,
+.psi-table td {
+  height: var(--line);
+  padding: 0 1rem 0 0;
+  /* hairline without adding height (a border would shift every following line) */
+  background: linear-gradient(var(--border), var(--border)) bottom / 100% 1px no-repeat;
+  text-align: left;
+  white-space: nowrap;
+}
+.psi-table thead th {
+  color: var(--fg-dim);
+  font-weight: 400;
+}
+.psi-table tbody th {
+  font-weight: 400;
+}
+.psi-num {
+  text-align: right !important;
+  padding-right: 0 !important;
+}
+.psi-bar {
+  letter-spacing: -0.05em;
+}
+/* the empty part of a bar stays visible as a track, so the length reads against 100 */
+.psi-off,
+.psi-pending .psi-bar {
+  color: color-mix(in oklab, var(--fg-dim) 35%, transparent);
+}
+.psi [data-level='good'] :is(.psi-on, .psi-icon) {
+  color: var(--psi-good);
+}
+.psi [data-level='mid'] :is(.psi-on, .psi-icon) {
+  color: var(--psi-mid);
+}
+.psi [data-level='bad'] :is(.psi-on, .psi-icon) {
+  color: var(--psi-bad);
+}
+.psi-score {
+  display: inline-block;
+  min-width: 3ch;
+  text-align: right;
+  font-weight: 700;
+}
+.psi [data-delta='up'] {
+  color: var(--ok);
+}
+.psi-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1rem;
+  margin: var(--line) 0 0;
+}
+/* narrow screens get the short bar, so the table still fits without losing the color */
+.psi-bar-sm {
+  display: none;
+}
+@media (max-width: 30rem) {
+  .psi-bar-lg {
+    display: none;
+  }
+  .psi-bar-sm {
+    display: inline;
+  }
+  /* the word "pending" is enough, the empty dotted bar would force a scrollbar */
+  .psi-pending .psi-bar-sm {
+    display: none;
+  }
+  .psi-table th,
+  .psi-table td {
+    padding-right: 0.75rem;
+  }
+}
+
 /* ---------- git log (components/GitLog.astro), global for the split view ---------- */
 /* a terminal window; every row is one editor line, so the gutter numbers stay aligned
    (the frame is a shadow, not a border, because a border would add height) */
