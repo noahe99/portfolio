@@ -9,6 +9,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 import mdx from '@astrojs/mdx';
 
+import sitemap from '@astrojs/sitemap';
+
 /**
  * Fills the placeholders of the home page boot log with real build facts
  * (page count, build duration, commit) once the build is done.
@@ -60,8 +62,13 @@ function buildInfo() {
 
 // https://astro.build/config
 export default defineConfig({
-  // TODO: set `site` to the final domain (enables canonical + hreflang URLs)
-  integrations: [buildInfo(), mdx()],
+  // Switch to the final domain at launch (drives canonical, hreflang, og:image and the sitemap).
+  site: 'https://portfolio.edelsbrunnernoah.workers.dev',
+  integrations: [
+    buildInfo(),
+    mdx(),
+    sitemap({ i18n: { defaultLocale: 'de', locales: { de: 'de-AT', en: 'en-US' } } }),
+  ],
   markdown: {
     shikiConfig: { theme: 'tokyo-night' },
   },
