@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# No "Disallow: /" on purpose: crawlers must be able to fetch the pages to see
+# their noindex meta tag (see `indexable` in src/config.ts).
+# At launch, add: Sitemap: https://<final-domain>/sitemap-index.xml

@@ -29,6 +29,7 @@ const alternates = locales.map((l) => ({ lang: l, path: switchPath(Astro.url.pat
     <meta name="color-scheme" content="light dark" />
     <title>{fullTitle}</title>
     <meta name="description" content={description ?? t.description} />
+    {!site.indexable && <meta name="robots" content="noindex, nofollow" />}
     <meta name="generator" content={Astro.generator} />
     <meta name="x-page" content={current} />
     <meta name="x-file" content={file} />
